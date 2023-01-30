@@ -41,7 +41,7 @@ if __name__ == "__main__":
     # 0. parameters for training
     # alpha = 1e-10 # learning rate < Version with no standardization
     alpha = 1e-1 # learning rate
-    max_iter = 100000 # max_iter
+    max_iter = 60 # max_iter
 
     # 1. open and load the training dataset
     try:
@@ -65,12 +65,7 @@ if __name__ == "__main__":
 
     # 2. create a model from MyLinearRegression class. The thetas are
     # initialized with specific values to ease the training
-    # -------------------------------------------------------------------------
-    # IF IN THE CORRECTION OF THIS PROJECT PASSING ANYTHING ELSE THAN THETAS 
-    # IN MODELS.CSV, THEN I CAN USE THE FOLLOWING LINE AND DON'T USE STANDARDI-
-    # ZATION
-    # -------------------------------------------------------------------------
-    # MyLR = MyLinearRegression(np.array([9000, -0.05]).reshape(-1, 1),
+    # MyLR = MyLinearRegression(np.array([9000., -0.05]).reshape(-1, 1),
     #                           alpha=alpha, max_iter=max_iter)
     MyLR = MyLinearRegression(np.random.rand(2, 1).reshape(-1, 1), alpha=alpha,
                               max_iter=max_iter)
@@ -79,8 +74,8 @@ if __name__ == "__main__":
     x_norm, mean, std = z_score(x)
 
     # 4. train the model (fit) with all the dataset)
-    # MyLR.fit_(x, y) < Version with no standartization
-    MyLR.fit_(x_norm, y)
+    # MyLR.fit_(x, y, plot=True) # < Version with no standartization
+    MyLR.fit_(x_norm, y, plot=True)
 
     # 5. save the updated thetas in 'model.csv' file
     try:
@@ -99,7 +94,7 @@ if __name__ == "__main__":
 
     # 7. plot the training data repartition and the prediction line
     # predicted values
-    # y_hat = MyLR.predict_(x) < Version with no standardization
+    # y_hat = MyLR.predict_(x) # < Version with no standardization
     y_hat = MyLR.predict_(x_norm)
     # plot
     plt.figure()

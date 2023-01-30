@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # usage if an argument is provided)
     if len(sys.argv) > 1:
         print("predict: invalid argument\n"
-              "Usage: python predict.py (with no argument)", file=sys.stderr)
+              "Usage: python precision.py (with no argument)", file=sys.stderr)
         sys.exit()
 
     # -------------------------------------------------------------------------
@@ -58,9 +58,10 @@ if __name__ == "__main__":
     # -------------------------------------------------------------------------
     # Linear regression
     # -------------------------------------------------------------------------
-    # 1. Check if there is a 'model.csv' file in the current folder with a
-    # theta configuration
+    # 1. Update model thetas, mean, std from file if it exists
     thetas = np.array([0.0, 0.0])
+    mean = 0
+    std = 1
     try:
         with open('models.csv', 'r') as file:
             reader = csv.DictReader(file) # DictRader will skip the header row

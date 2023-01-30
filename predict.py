@@ -11,6 +11,10 @@ import sys
 import csv
 # nd arrays
 import numpy as np
+# dataframes
+import pandas as pd
+# for plot
+import matplotlib.pyplot as plt
 # user modules
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'classes'))
 from MyLinearRegression import MyLinearRegression
@@ -55,8 +59,7 @@ if __name__ == "__main__":
     # -------------------------------------------------------------------------
     # Linear regression
     # -------------------------------------------------------------------------
-    # 1. Check if there is a 'model.csv' file in the current folder with a
-    # theta configuration
+    # 1. Update model thetas, mean, std from file if it exists
     thetas = np.array([0.0, 0.0])
     mean = 0
     std = 1
@@ -92,6 +95,45 @@ if __name__ == "__main__":
     mileage_norm = (mileage - mean) / std
     predicted_price = MyLR.predict_(np.array([[mileage_norm]]))
 
+    # -------------------------------------------------------------------------
+    # Display prediction
+    # -------------------------------------------------------------------------
     # 3. display the predicted value to the user
     print(f'For a mileage of {mileage},'
           f' the predicted price is {predicted_price[0][0]}')
+
+    # -------------------------------------------------------------------------
+    # Plot prediction aside with the training dataset data
+    # -------------------------------------------------------------------------
+    # open and load the training dataset
+    try:
+        df = pd.read_csv("./data.csv")
+    except:
+        print("Error when trying to read dataset", file=sys.stderr)
+        sys.exit(1)
+
+    # check that the expected columns are here and check their type
+    if not set(['km', 'price']).issubset(df.columns):
+        print("Missing columns in 'data.csv' file", file=sys.stderr)
+        sys.exit(1)
+    if not (df.km.dtype == float or df.km.dtype == int) \
+            or not (df.price.dtype == float or df.price.dtype == int):
+        print("Wrong column type in 'data.csv' file", file=sys.stderr)
+        sys.exit(1)
+
+    # set x and y
+    x = np.array(df['km']).reshape((-1, 1))
+    y = np.array(df['price']).reshape((-1, 1))
+
+    # normalize x data
+    x_norm = (x - mean) / std
+    y_hat = MyLR.predict_(x_norm)
+
+    # plot
+    plt.figure()
+    plt.scatter(x, y, marker='o', label='training data')
+    plt.scatter(mileage, predicted_price[0][0], marker='o',
+                label='predicted data')
+    plt.plot(x, y_hat, color='red', label='prediction function')
+    plt.legend()
+    plt.show()
