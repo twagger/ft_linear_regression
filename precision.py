@@ -1,6 +1,4 @@
-"""
-Module to use a model to predict the price of a car according to its mileage
-"""
+"""This module computes the loss for a model"""
 # -----------------------------------------------------------------------------
 # Module imports
 # -----------------------------------------------------------------------------
@@ -11,13 +9,15 @@ import sys
 import csv
 # nd arrays
 import numpy as np
+# dataframe
+import pandas as pd
 # user modules
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'classes'))
 from MyLinearRegression import MyLinearRegression
 
 
 # -----------------------------------------------------------------------------
-# Program : Predict
+# Program : Computes and display the loss of the model
 # -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -33,24 +33,27 @@ if __name__ == "__main__":
         sys.exit()
 
     # -------------------------------------------------------------------------
-    # Prompt the user for mileage
+    # Training dataset
     # -------------------------------------------------------------------------
-    while 1:
-        try:
-            mileage = input("Enter a mileage\n>> ")
-        except EOFError:
-            print('\n')
-            continue
-        except KeyboardInterrupt:
-            print('\nGoodbye !')
-            sys.exit(0)
+    # 1. open and load the training dataset
+    try:
+        df = pd.read_csv("./data.csv")
+    except:
+        print("Error when trying to read dataset", file=sys.stderr)
+        sys.exit(1)
 
-        # check if mileage can be converted to a proper numeric type
-        try:
-            mileage = float(mileage)
-            break
-        except ValueError:
-            print('Wrong value, please enter a number\n')
+    # check that the expected columns are here and check their type
+    if not set(['km', 'price']).issubset(df.columns):
+        print("Missing columns in 'data.csv' file", file=sys.stderr)
+        sys.exit(1)
+    if not (df.km.dtype == float or df.km.dtype == int) \
+            or not (df.price.dtype == float or df.price.dtype == int):
+        print("Wrong column type in 'data.csv' file", file=sys.stderr)
+        sys.exit(1)
+
+    # set x and y
+    x = np.array(df['km']).reshape((-1, 1))
+    y = np.array(df['price']).reshape((-1, 1))
 
     # -------------------------------------------------------------------------
     # Linear regression
@@ -79,13 +82,12 @@ if __name__ == "__main__":
         print("Error when trying to read 'model.csv'", file=sys.stderr)
         sys.exit(1)
 
-    # 1. create a model from MyLinearRegression class. The thetas are
+    # 2. create a model from MyLinearRegression class. The thetas are
     # initialized at 0.0 if no model.csv is found in the folder
     MyLR = MyLinearRegression(thetas.reshape(-1, 1))
 
-    # 2. predict one value (the prompted one)
-    predicted_price = MyLR.predict_(np.array([[mileage]]))
-
-    # 3. display the predicted value to the user
-    print(f'For a mileage of {mileage},'
-          f' the predicted price is {predicted_price[0][0]}')
+    # 3. display the precision of the model for the training dataset
+    mse_ = MyLR.mse_(y, MyLR.predict_(x))
+    print(f'For the training dataset, '
+          f'the precision score (mse) of your model is {mse_}.')
+    
