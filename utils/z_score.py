@@ -24,8 +24,8 @@ def z_score(x: np.ndarray) -> tuple:
         - the standard deviation used for standardization
     """
     try:
-        mean_ = np.mean(x, axis=0)
-        std_ =  np.std(x, axis=0)
+        mean_ = np.mean(x, axis=0)[0]
+        std_ =  np.std(x, axis=0)[0]
         x_prime = (x - mean_) / std_
         return x_prime, mean_, std_
     except:

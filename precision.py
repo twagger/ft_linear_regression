@@ -68,6 +68,9 @@ if __name__ == "__main__":
             for row in reader:
                 thetas = np.array([float(theta) for theta 
                                 in row['thetas'].split(',')]).reshape(-1, 1)
+                # get mean and standard deviation used in standardization
+                mean = float(row['mean'])
+                std = float(row['std'])
             # check that thetas are valid
             if np.isnan(thetas).any() is True:
                 print('Something when wrong during the training, '
@@ -87,7 +90,8 @@ if __name__ == "__main__":
     MyLR = MyLinearRegression(thetas.reshape(-1, 1))
 
     # 3. display the precision of the model for the training dataset
-    mse_ = MyLR.mse_(y, MyLR.predict_(x))
+    x_norm = (x - mean) / std
+    mse_ = MyLR.mse_(y, MyLR.predict_(x_norm))
     print(f'For the training dataset, '
           f'the precision score (mse) of your model is {mse_}.')
     

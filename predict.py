@@ -58,6 +58,8 @@ if __name__ == "__main__":
     # 1. Check if there is a 'model.csv' file in the current folder with a
     # theta configuration
     thetas = np.array([0.0, 0.0])
+    mean = 0
+    std = 1
     try:
         with open('models.csv', 'r') as file:
             reader = csv.DictReader(file) # DictRader will skip the header row
@@ -65,6 +67,9 @@ if __name__ == "__main__":
             for row in reader:
                 thetas = np.array([float(theta) for theta 
                                 in row['thetas'].split(',')]).reshape(-1, 1)
+                # get mean and standard deviation used in standardization
+                mean = float(row['mean'])
+                std = float(row['std'])
             # check that thetas are valid
             if np.isnan(thetas).any() is True:
                 print('Something when wrong during the training, '
@@ -83,8 +88,9 @@ if __name__ == "__main__":
     # initialized at 0.0 if no model.csv is found in the folder
     MyLR = MyLinearRegression(thetas.reshape(-1, 1))
 
-    # 2. predict one value (the prompted one)
-    predicted_price = MyLR.predict_(np.array([[mileage]]))
+    # 2. predict one value (the prompted one) with standardized mileage
+    mileage_norm = (mileage - mean) / std
+    predicted_price = MyLR.predict_(np.array([[mileage_norm]]))
 
     # 3. display the predicted value to the user
     print(f'For a mileage of {mileage},'

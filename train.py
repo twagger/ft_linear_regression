@@ -39,7 +39,8 @@ if __name__ == "__main__":
     # Linear regression
     # -------------------------------------------------------------------------
     # 0. parameters for training
-    alpha = 1e-10 # learning rate
+    # alpha = 1e-10 # learning rate < Version with no standardization
+    alpha = 1e-1 # learning rate
     max_iter = 100000 # max_iter
 
     # 1. open and load the training dataset
@@ -64,24 +65,31 @@ if __name__ == "__main__":
 
     # 2. create a model from MyLinearRegression class. The thetas are
     # initialized with specific values to ease the training
-    MyLR = MyLinearRegression(np.array([9000, -0.05]).reshape(-1, 1), alpha=alpha,
+    # -------------------------------------------------------------------------
+    # IF IN THE CORRECTION OF THIS PROJECT PASSING ANYTHING ELSE THAN THETAS 
+    # IN MODELS.CSV, THEN I CAN USE THE FOLLOWING LINE AND DON'T USE STANDARDI-
+    # ZATION
+    # -------------------------------------------------------------------------
+    # MyLR = MyLinearRegression(np.array([9000, -0.05]).reshape(-1, 1),
+    #                           alpha=alpha, max_iter=max_iter)
+    MyLR = MyLinearRegression(np.random.rand(2, 1).reshape(-1, 1), alpha=alpha,
                               max_iter=max_iter)
 
     # 3.standardize the data to ease gradient descent
-    # x_norm, mean_, std_ = z_score(x)
+    x_norm, mean, std = z_score(x)
 
     # 4. train the model (fit) with all the dataset)
-    # MyLR.fit_(x_norm, y)
-    MyLR.fit_(x, y)
+    # MyLR.fit_(x, y) < Version with no standartization
+    MyLR.fit_(x_norm, y)
 
     # 5. save the updated thetas in 'model.csv' file
     try:
         with open('models.csv', 'w') as file:
             writer = csv.writer(file)
-            writer.writerow(["thetas"])
+            writer.writerow(["thetas", "mean", "std"])
 
             thetas_str = ','.join([f'{theta[0]}' for theta in MyLR.thetas])
-            writer.writerow([thetas_str])
+            writer.writerow([thetas_str, mean, std])
     except:
         print("Error when trying to read 'model.csv'", file=sys.stderr)
         sys.exit(1)
@@ -91,8 +99,8 @@ if __name__ == "__main__":
 
     # 7. plot the training data repartition and the prediction line
     # predicted values
-    # y_hat = MyLR.predict_(x_norm)
-    y_hat = MyLR.predict_(x)
+    # y_hat = MyLR.predict_(x) < Version with no standardization
+    y_hat = MyLR.predict_(x_norm)
     # plot
     plt.figure()
     plt.scatter(x, y, marker='o')
