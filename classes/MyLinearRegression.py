@@ -7,6 +7,7 @@ My Linear Regression class
 # system
 import os
 import sys
+from math import sqrt
 # nd arrays
 import numpy as np
 # for decorators
@@ -77,21 +78,6 @@ class MyLinearRegression():
             return None
 
     @type_validator
-    @shape_validator({'y': ('m', 1), 'y_hat': ('m', 1)})
-    def mse_(self, y: np.ndarray, y_hat: np.ndarray) -> float:
-        """
-        Computes the mean squared error of two non-empty numpy.array,
-        without any for loop.
-        The two arrays must have the same dimensions.
-        """
-        try:
-            m, _ = y.shape
-            loss_vector = self.loss_elem_(y, y_hat)
-            return float((np.sum(loss_vector) / m))
-        except:
-            return None
-
-    @type_validator
     @shape_validator({'x': ('m', 'n'), 'y': ('m', 1)})
     def gradient_(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
@@ -125,5 +111,66 @@ class MyLinearRegression():
                 # 4. calculate and assign the new thetas
                 self.thetas -= self.alpha * gradient
             return self.thetas
+        except:
+            return None
+
+    @type_validator
+    @shape_validator({'y': ('m', 1), 'y_hat': ('m', 1)})
+    def mse_(self, y: np.ndarray, y_hat: np.ndarray) -> float:
+        """
+        Mean Squared Error (MSE): It is the average of the squared differences
+        between the predicted and actual values. The MSE is a measure of the
+        quality of an estimator, it is always non-negative, and values closer
+        to zero are better.
+        """
+        try:
+            m, _ = y.shape
+            loss_vector = self.loss_elem_(y, y_hat)
+            return float((np.sum(loss_vector) / m))
+        except:
+            return None
+
+    @type_validator
+    @shape_validator({'y': ('m', 1), 'y_hat': ('m', 1)})
+    def rmse_(self, y: np.ndarray, y_hat: np.ndarray) -> float:
+        """
+        Root Mean Squared Error (RMSE): It is the square root of the mean
+        squared error, which is more interpretable since it has the same units
+        as the target variable. It is used to measure the difference between
+        the predicted values and the actual values.
+        """
+        try:
+            return sqrt(self.mse_(y, y_hat))
+        except:
+            return None
+
+    @type_validator
+    @shape_validator({'y': ('m', 1), 'y_hat': ('m', 1)})
+    def mae_(self, y: np.ndarray, y_hat: np.ndarray) -> float:
+        """
+        Mean Absolute Error (MAE): It is the average of the absolute
+        differences between the predicted and actual values. It is always
+        non-negative, and values closer to zero are better.
+        """
+        try:
+            return float(np.sum(np.absolute(y_hat - y)) / len(y))
+        except:
+            return None
+
+    @type_validator
+    @shape_validator({'y': ('m', 1), 'y_hat': ('m', 1)})
+    def r2score_(self, y: np.ndarray, y_hat: np.ndarray) -> float:
+        """
+        R-squared score (R2 score): It is a statistical measure that represents
+        the proportion of the variance in the dependent variable that is
+        predictable from the independent variable.
+        It ranges from 0 to 1, where 1 means that the model perfectly fits the
+        data and 0 means that the model has no explanatory power.
+        """
+        try:
+            mean_y = np.mean(y)
+            sse = float((((y_hat - y).T.dot(y_hat - y)))[0][0])
+            sst = float((((y - mean_y).T.dot(y - mean_y)))[0][0])
+            return 1 - (sse / sst)
         except:
             return None

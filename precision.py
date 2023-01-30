@@ -91,7 +91,20 @@ if __name__ == "__main__":
 
     # 3. display the precision of the model for the training dataset
     x_norm = (x - mean) / std
-    mse_ = MyLR.mse_(y, MyLR.predict_(x_norm))
-    print(f'For the training dataset, '
-          f'the precision score (mse) of your model is {mse_}.')
-    
+    y_hat = MyLR.predict_(x_norm)
+
+    # MSE
+    print(f'{"":-<80}')
+    print(f'MSE score : {MyLR.mse_(y, y_hat)}\n{MyLR.mse_.__doc__}')
+
+    # RMSE
+    print(f'{"":-<80}')
+    print(f'RMSE score : {MyLR.rmse_(y, y_hat)}\n{MyLR.rmse_.__doc__}')
+
+    # MAE
+    print(f'{"":-<80}')
+    print(f'MAE score : {MyLR.mae_(y, y_hat)}\n{MyLR.mae_.__doc__}')
+
+    # R2SCORE
+    print(f'{"":-<80}')
+    print(f'R2 score : {MyLR.r2score_(y, y_hat)}\n{MyLR.r2score_.__doc__}')
