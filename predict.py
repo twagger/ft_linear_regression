@@ -52,6 +52,9 @@ if __name__ == "__main__":
         # check if mileage can be converted to a proper numeric type
         try:
             mileage = float(mileage)
+            if (mileage < 0):
+                print('Wrong value, please enter a positive number\n')
+                continue
             break
         except ValueError:
             print('Wrong value, please enter a number\n')
