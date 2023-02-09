@@ -98,6 +98,10 @@ if __name__ == "__main__":
     y_hat = MyLR.predict_(x_norm)
     # plot
     plt.figure()
-    plt.scatter(x, y, marker='o')
-    plt.plot(x, y_hat, color='red')
+    plt.scatter(x, y, marker='o', zorder=10, label='training data')
+    plt.plot(x, y_hat, color='red', zorder=15, label='prediction function')
+    for i in range(len(x)):
+        plt.plot((x[i], x[i]), (y[i], y_hat[i]), c='purple', ls='--', zorder=5,
+                 label=f'{"loss per element" if i == 0 else ""}')
+    plt.legend()
     plt.show()
